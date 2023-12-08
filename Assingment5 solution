@@ -1,0 +1,129 @@
+create database assignment5;
+use assignment5;
+create table Student(sID int, sName varchar(10),GPA numeric(2,1),sizeHS int);
+insert into Student values (123, 'Amy', 3.9, 1000);
+insert into Student values (234, 'Bob', 3.6, 1500);
+insert into Student values (345, 'Craig', 3.5, 500);
+insert into Student values (456, 'Doris', 3.9, 1000);
+insert into Student values (567, 'Edward', 2.9, 2000);
+insert into Student values (678, 'Fay', 3.8, 200);
+insert into Student values (789, 'Gary', 3.4, 800);
+insert into Student values (987, 'Helen', 3.7, 800);
+insert into Student values (876, 'Irene', 3.9, 400);
+insert into Student values (765, 'Jay', 2.9, 1500);
+insert into Student values (654, 'Amy', 3.9, 1000);
+insert into Student values (543, 'Craig', 3.4, 2000);
+create table Apply(sID int, cName varchar(10),major varchar(20),decision char(1));
+insert into Apply values (123, 'Stanford', 'CS', 'Y');
+insert into Apply values (123, 'Stanford', 'EE', 'N');
+insert into Apply values (123, 'Berkeley', 'CS', 'Y');
+insert into Apply values (123, 'Cornell', 'EE', 'Y');
+insert into Apply values (234, 'Berkeley', 'biology', 'N');
+insert into Apply values (345, 'MIT', 'bioengineering', 'Y');
+insert into Apply values (345, 'Cornell', 'bioengineering', 'N');
+insert into Apply values (345, 'Cornell', 'CS', 'Y');
+insert into Apply values (345, 'Cornell', 'EE', 'N');
+insert into Apply values (678, 'Stanford', 'history', 'Y');
+insert into Apply values (987, 'Stanford', 'CS', 'Y');
+insert into Apply values (987, 'Berkeley', 'CS', 'Y');
+insert into Apply values (876, 'Stanford', 'CS', 'N');
+insert into Apply values (876, 'MIT', 'biology', 'Y');
+insert into Apply values (876, 'MIT', 'marine biology', 'N');
+insert into Apply values (765, 'Stanford', 'history', 'Y');
+insert into Apply values (765, 'Cornell', 'history', 'N');
+insert into Apply values (765, 'Cornell', 'psychology', 'Y');
+insert into Apply values (543, 'MIT', 'CS', 'N');
+create table College(cName varchar(10), state varchar(10), enrollment int);
+insert into College values ('Stanford', 'CA', 15000);
+insert into College values ('Berkeley', 'CA', 36000);
+insert into College values ('MIT', 'MA', 10000);
+insert into College values ('Cornell', 'NY', 21000);
+insert into College values ('Harvard', 'MA', 50040);
+-- Write SQL Queries for the following:
+-- 1. IDs and names of students who have applied to major in CS at some college.
+SELECT sid,sname from student where sid in (select sid from apply where major =
+'CS');
+-- 2. Find ID and name of student having same high school size as Jay.
+select sid,sname from student where sizeHS in(select sizeHS from student where
+sname='Jay');
+-- 3. Find ID and name of student having same high school size as Jay but result should not
+-- include Jay.
+select sid,sname from student where sizeHS in (select sizeHS from student where
+sname='Jay') and sname not in('Jay');
+-- 4. Find the name of student with their GPA and Sid whose GPA not equal to GPA of
+-- Irene?
+select sid,sname,gpa from student where gpa not in (select gpa from student where
+sname='Irene');
+-- 5. Find college where any student having their name started from J have applied?
+select cname from apply where sid in(select sid from student where sname like 'J%');
+-- 6. Find all different major where Irene has applied?
+select distinct major from apply where sid in(select sid from student where
+sname='Irene');
+-- 7. Find IDs of student and major who applied in any of major Irene had applied to?
+select distinct sid,major from apply where major in(select major from apply where sid
+in (select sid from student s1 where sname='Irene'));
+-- 8. Find IDs of student and major who applied in any of major Irene had applied to? But
+-- this time exclude Irene sID from the list.
+select distinct sid,major from apply where major in(select major from apply where sid
+in (select sid from student where sname = 'Irene'))and sid not in(select sid from
+student where sname = 'Irene');
+-- 9. Give the number of colleges Jay applied to? (Remember count each college once no
+-- matter if he applied to same college twice with different major)
+select count(distinct cname) from apply where sid in(select sid from student where
+sname='Jay');
+-- 10. Find sID of student who applied to more or same number of college where Jay has
+-- applied?
+select sid from apply where cname in(select cname from apply where sid in(select sid
+from student where sname='Jay'));
+-- 11. Find details of Students who applied to major CS but not applied to major EE? (sID
+-- 987, 876, 543 should only be include in result)
+select sid,sname,gpa,sizehs from student where sid in (select sid from Apply where
+major= 'CS' minus (select sid from Apply where major='EE'));
+-- 12. All colleges such that some other college is in same state. (Cornell should not be part
+-- of result as no other college in New York Hint: use exists)
+select cname from college c1 where exists (select state from college c2 where
+c1.state = c2.state and c1.cname!=c2.cname);
+-- 13. Find the college with highest enrollment.
+select cname from college c1 where not exists (select enrollment from college c2
+where c1.enrollment < c2.enrollment);
+-- 14. Find name of student having lowest GPA.
+select sname from student s1 where not exists (Select gpa from student s2 where
+s1.gpa>s2.gpa);
+-- 15. Find the most popular major.
+select major, count(sid) from apply group by major having count(sid) = (select
+max(count(sid)) from apply group by major);
+-- 16. Find sID, sName, sizeHS of all students NOT from smallest HS
+select sid,sizehs,sname from student where sizehs != (select min(sizehs) from
+student);
+-- 17. Find the name of student who applies to all the colleges where sID 987 has applied?
+select sname,sid from student where not exists (select distinct cname from apply
+where sid=987 minus select distinct cname from apply where sid=student.sid);
+-- 18. Find college where all the student have applied.
+select cname from college c where not exists((select sid from student s)minus (select
+sid from apply a where a.cname=c.cname));
+-- 19. Find sid of student who have not applied to Stanford.
+select sid from student minus select distinct sid from apply where cname='Stanford';
+-- 20. Find sid of Student that applied to both Stanford and Berkeley.
+select sname from student union select cname from college;
+-- 21. Give list of all names including all names of colleges and students.
+select sname from student union select cname from college;
+-- 22. Create a table ApplicationInfo having columns sID: int, sName: varchar2(10) and
+-- number_of_applications: number(2) they filed? Populate this table with appropriate data using
+-- insert command.
+create table ApplicationInfo( sid int,sname varchar(10),number_of_applications
+numeric(2));
+insert into applicationinfo select s.sid,s.sname,nvl(a.no_of_application,0)from ((select
+sid,sname from student) s left outer join(select sid,count(*) as no_of_application from apply
+group by sid) a on s.sid=a.sid);
+select * from applicationinfo;
+-- 23. Create table ApplicationData and load with ID, name of college where they applied
+-- with state of college on runtime using single query.
+create table ApplicationData as
+(select S.sid, S.sname, A.cname, A.state from student S left join(select * from college
+natural join Apply) A on S.sid=A.sid);
+select * from ApplicationData;
+-- 24. Stanford decide not to take any student who have also applied to its rival Berkeley
+-- turn their application decision to N.
+update apply set decision='N' where cname='Stanford' and sid in ((select sid from apply where cname='Stanford')intersect(select sid from apply where cname='Berkeley'));
+-- 25. Delete applications that are filed Colleges situated at city ‘New York’.
+delete from apply where cname in(select cname from college where state = 'NY');
