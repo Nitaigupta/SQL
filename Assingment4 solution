@@ -1,0 +1,75 @@
+create database assignment4;
+use assignment4;
+create table College(cName varchar(10) primary key, state varchar(10), enrollment int);
+create table Student(sID int primary key, sName varchar(10), GPA real, sizeHS int);
+create table Apply(sID int, cName varchar(10),major varchar(20),decision char(1));
+insert into Student values (123, 'Amy', 3.9, 1000);
+insert into Student values (234, 'Bob', 3.6, 1500);
+insert into Student values (345, 'Craig', 3.5, 500);
+insert into Student values (456, 'Doris', 3.9, 1000);
+insert into Student values (567, 'Edward', 2.9, 2000);
+insert into Student values (678, 'Fay', 3.8, 200);
+insert into Student values (789, 'Gary', 3.4, 800);
+insert into Student values (987, 'Helen', 3.7, 800);
+insert into Student values (876, 'Irene', 3.9, 400);
+insert into Student values (765, 'Jay', 2.9, 1500);
+insert into Student values (654, 'Amy', 3.9, 1000);
+insert into Student values (543, 'Craig', 3.4, 2000);
+insert into College values ('Stanford', 'CA', 15000);
+insert into College values ('Berkeley', 'CA', 36000);
+insert into College values ('MIT', 'MA', 10000);
+insert into College values ('Cornell', 'NY', 21000);
+insert into College values ('Harvard', 'MA', 50040);
+insert into Apply values (123, 'Stanford', 'CS', 'Y');
+insert into Apply values (123, 'Stanford', 'EE', 'N');
+insert into Apply values (123, 'Berkeley', 'CS', 'Y');
+insert into Apply values (123, 'Cornell', 'EE', 'Y');
+insert into Apply values (234, 'Berkeley', 'biology', 'N');
+insert into Apply values (345, 'MIT', 'bioengineering', 'Y');
+insert into Apply values (345, 'Cornell', 'bioengineering', 'N');
+insert into Apply values (345, 'Cornell', 'CS', 'Y');
+insert into Apply values (345, 'Cornell', 'EE', 'N');
+insert into Apply values (678, 'Stanford', 'history', 'Y');
+insert into Apply values (987, 'Stanford', 'CS', 'Y');
+insert into Apply values (987, 'Berkeley', 'CS', 'Y');
+insert into Apply values (876, 'Stanford', 'CS', 'N');
+insert into Apply values (876, 'MIT', 'biology', 'Y');
+insert into Apply values (876, 'MIT', 'marine biology', 'N');
+insert into Apply values (765, 'Stanford', 'history', 'Y');
+insert into Apply values (765, 'Cornell', 'history', 'N');
+insert into Apply values (765, 'Cornell', 'psychology', 'Y');
+insert into Apply values (543, 'MIT', 'CS', 'N');
+select count(*) from Student;
+select avg(gpa) as Average from Student;
+SELECT max(gpa) as max_GPA,min(gpa) as min_GPA from student;
+SELECT count(gpa) from student WHERE gpa>=3.7;
+SELECT max(gpa),avg(gpa),min(gpa),sum(gpa) from student;
+SELECT count(distinct cname) from Apply;
+SELECT count(distinct major) from Apply;
+SELECT count(sid) from Apply;
+SELECT avg(distinct gpa) from student;
+SELECT count(sid) from apply where decision='Y';
+SELECT count(sid) from student where gpa>3.4 and sizehs>1000;
+SELECT count(sid) from Apply where major in('marine biology');
+SELECT count(sid),decision from apply group by decision;
+SELECT count(sid),major from apply group by major;
+SELECT count(sid),cname from apply group by cname;
+SELECT count(sid),cname,major from apply group by cname,major;
+SELECT cname,major from apply group by cname,major having
+count(*)>=2;
+SELECT state,count(cname) from college group by state;
+select sname from student group by sname having count(sname)>=2;
+select sname,count(apply.sid) from student left outer join apply on
+student.sid=apply.sid group by apply.sid,sname;
+select sname from student left outer join apply on
+student.sid=apply.sid group by apply.sid,sname having
+count(apply.sid)>=3;
+select sname from student left outer join apply on
+student.sid=apply.sid group by apply.sid,sname having
+count(apply.sid)=0;
+select max(gpa),avg(gpa),min(gpa) from student natural join apply
+group by cname;
+select count(sid),gpa from student group by gpa having
+count(gpa)>=2;
+SELECT sname from student where sname like 'A%' or sname like 'B%'
+or sname like 'C%';
