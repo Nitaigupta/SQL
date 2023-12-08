@@ -1,0 +1,49 @@
+--query 3 fibonnaci series
+DECLARE 
+    a int:=0;
+	b int:=1;
+	c int:=0;
+	n int:=10;
+BEGIN 
+    DBMS_OUTPUT.PUT_LINE(a); 
+    DBMS_OUTPUT.PUT_LINE(b); 
+    FOR i IN 3..n LOOP 
+        c := a + b; 
+        DBMS_OUTPUT.PUT_LINE(c); 
+        a := b; 
+        b := c; 
+    END LOOP; 
+END; 
+
+--query 2 prime number
+Declare
+	n int:=24;
+	check_prime int:=0;
+	rem int;
+Begin 
+	for i in 2..n-1	Loop
+    	rem:=MOD(n,i);
+		IF rem=0
+		THEN
+		check_prime:=1;
+		DBMS_Output.Put_Line('Not a prime number');
+		EXIT;
+	END IF;
+END LOOP;
+IF check_prime=0
+    THEN
+	DBMS_Output.Put_Line('Prime Number');
+END IF;
+END;
+
+--query 1 factorial
+Declare 
+ n int:=5;
+ f int:=5;
+BEGIN
+for i in 2..n-1
+Loop
+f:=f*i;
+END LOOP;
+DBMS_OUTPUT.PUT_LINE('Factorial of number is:'||f);
+END;
