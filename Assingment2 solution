@@ -1,0 +1,32 @@
+create database assignment2;
+use assignment2;
+create table College(cName varchar(10),state varchar(10),enrollment int);
+-- Student (sID: int, sName: varchar2(10), GPA: number(2,1),sizeHS:int)
+create table Student(sID int,sName varchar(10),GPA numeric(2,1),sizeHS int);
+-- Apply (sID: int, cName: varchar2(10), major: varchar2(20))
+create table Apply(sID int,cName varchar(10),major varchar(20));
+Alter table College
+add primary key(cName);
+Alter table Student
+add primary key(sID);
+Alter table Apply
+add primary key(sID,cName,major);
+alter table Apply
+add foreign key(sid) references Student;
+alter table Apply
+add foreign key(cName) references College;
+alter table Apply modify major varchar(25);
+alter table Apply
+add column decision varchar(3) not null;
+alter table Apply modify decision char(1);
+alter table Apply drop constraint cname_foreign;
+alter table  Student
+drop column sizeHS;
+alter table College
+drop primary key;
+alter table Apply add unique(cname,major);
+alter table Apply 
+add foreign key(cName) references College on delete cascade;
+alter table Apply add constraint fk_apply foreign key(sID) references Student on delete set null;
+alter table College
+rename column enrollment to enroll;
